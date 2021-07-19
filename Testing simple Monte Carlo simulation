@@ -1,0 +1,30 @@
+#Running basic Monte Carlo simulation
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Predicting Gross profit
+
+rev_m=170
+rev_std=20
+iterations=1000
+
+#run Monte Carlo Simulation, set mean value, standard deviation, iteration
+rev= np.random.normal(rev_m,rev_std,iterations)
+
+#plot Graph
+plt.figure(figsize=(15,6))
+plt.plot(rev)
+
+#Predict cost of good sold
+cogs=-(rev*np.random.normal(0.6,0.1))
+meancogs=cogs.mean()
+stdcogs=cogs.std()
+plt.figure(figsize=(15,6))
+plt.plot(cogs)
+plt.title('Simulation of Cost Of Good Sold')
+
+#calculate gross profit
+grossprofit= rev+cogs
+#plot Histogram to see that data is normal distributed
+plt.figure(figsize=(10,6));
+plt.hist(grossprofit,bin=10);
