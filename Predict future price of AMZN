@@ -3,7 +3,6 @@
 import yfinance as yf
 import numpy as np
 import matplotlib.pyplot as plt
-
 from scipy.stats import norm
 
 amzn=yf.download('amzn',start='2016-01-01')['Adj Close']
