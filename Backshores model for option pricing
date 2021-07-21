@@ -1,0 +1,25 @@
+#writing Python to calculate option pricing through blockshores model
+import numpy as np
+from scipy.stats import norm
+import yfinance as yf
+
+amzn=yf.download('AMZN',start='2020-01-01')['Adj Close']
+logrtamzn= np.log(amzn/amzn.shift(1)) 
+std= logrtamzn.std()*250**0.5 #=standardeviation
+
+s=amzn.iloc[-1]
+r= 0.025
+k=5000
+t=1
+
+#define function of d1, d2
+def d1(s,k,r,std,t):
+    return(np.log(s/k)+(r+std**2/2)*t)/(std*np.sqrt(t))
+def d2(s,k,r,std,t):
+    return(np.log(s/k)-(r+std**2/2)*t)/(std*np.sqrt(t))
+
+
+def bsm(s,k,r,std,t):
+    return(s * norm.cdf(d1(s, k, r, std, t))) - (k * np.exp(-r * t) * norm.cdf(d2(s,k, r, std, t)))
+
+value_option=bsm(s,k,r,std,t)
