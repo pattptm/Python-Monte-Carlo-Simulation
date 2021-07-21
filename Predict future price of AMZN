@@ -1,0 +1,53 @@
+#Predict stock price by using Monte Carlo simulation
+# predictstock price= pricetoday* random log return of r
+import yfinance as yf
+import numpy as np
+import matplotlib.pyplot as plt
+
+from scipy.stats import norm
+
+amzn=yf.download('amzn',start='2016-01-01')['Adj Close']
+logrtamzn=np.log(amzn/amzn.shift(1))
+mean= logrtamzn.mean()
+var=logrtamzn.var()
+std=logrtamzn.std()
+
+
+# in montecarlo simualtion, predict stock price by using random r from 
+#Brownion motion theory r= (mean-0.5*varaince)+(std*z)
+#r = drift+volatility
+drift=mean-(0.5*var)
+
+#calculate z=the distance between mean the event for volatility
+#norm.ppf will tell the distance
+#testing create z
+random=np.random.rand(10,2)
+print('Random number',random)
+z=norm.ppf(random)
+print('Z',z)
+
+#define days
+days=1000 #how many days that you want to predict
+iteration=10 #how many scenerio that you want computer to generate
+#Calculate z
+z1=norm.ppf(np.random.rand(days,iteration))
+
+#run Monte Carlo simulation with 1000 days and 10 iterations
+dailyrt=np.exp(np.array(drift)+(np.array(std)*z1))
+print('Daily Return',dailyrt)
+
+#find the latest stock price in order to predict the future price
+pricelist=np.zeros_like(dailyrt)
+pricelist[0]=amzn.iloc[-1]
+
+    
+#setting a loop
+for t in range(1, days):
+    pricelist[t] = pricelist[t - 1]*dailyrt[t]
+
+
+plt.plot(pricelist)
+plt.plot(figsize=(10,6))
+plt.ylabel('Days')
+plt.xlabel('Price')
+plt.title('Simulation of AMZN stock price')
